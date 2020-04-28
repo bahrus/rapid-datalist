@@ -10,7 +10,11 @@
   "devDependencies": {
     "es-dev-server": "1.46.1",
     "es-module-shims": "0.4.6",
+    "snowpack": "^1.7.1",
     "xtal-test": "0.0.44"
+  },
+  "dependencies": {
+    "ui5-buffet": "0.0.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
