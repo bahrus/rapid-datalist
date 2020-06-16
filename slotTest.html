@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class Outer extends HTMLElement{
+            constructor(){
+                super();
+                this.attachShadow({mode: 'open'});
+                this.shadowRoot.innerHTML = `
+                    <inner-element>
+                        <slot name="outerSlot" slot="innerSlot"></slot>
+                    </inner-element>
+                `;
+
+            }
+        }
+        customElements.define('outer-element', Outer);
+        class Inner extends HTMLElement{
+            constructor(){
+                super();
+                this.attachShadow({mode: 'open'});
+                this.shadowRoot.innerHTML = `
+                    <slot name="innerSlot"></slot>
+                `;
+                const slot = this.shadowRoot.querySelector('slot');
+                slot.addEventListener('slotchange', e => {
+                    const nodes = slot.assignedNodes({flatten: true});
+                    nodes.forEach(node =>{
+                        console.log(node.outerHTML);
+                        const subNodes = node.assignedNodes();
+                        subNodes.forEach(subNode =>{
+                            console.log(subNode.outerHTML);
+                        })
+                    })
+                    console.log(`Element in Slot "${slot.name}" changed to "${nodes[0].outerHTML}".`);
+                });
+
+            }
+        }
+        customElements.define('inner-element', Inner);
+    </script>
+    <outer-element>
+        <span slot="outerSlot"><input value=Hello></span>
+    </outer-element>
+</body>
+</html>
