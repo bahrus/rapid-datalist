@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input list=generatedJSON autocomplete="off"></input>
+    <datalist id=generatedJSON></datalist>
+    <script>
+        async function loadNames(){
+            const respLastNames = await fetch("../lastnames.txt");
+            const lastNamesTxt = await respLastNames.text();
+            const lnSplit = lastNamesTxt.split('\n');
+            const lastNames = lnSplit.map(s => s.trim());
+                
+            const respFirstNames = await fetch('../yob2019.txt');
+            const firstNamesTxt = await respFirstNames.text();
+            const fnSplit = firstNamesTxt.split('\n');
+            const firstNames = fnSplit.map(s => {
+                const iPosComma = s.indexOf(',');
+                let returnS = s.substr(0, iPosComma);
+                return returnS.trim();
+            });
+
+            const firstNamesLen = firstNames.length;
+            const lastNamesLen = lastNames.length;
+            const options = [];
+            for(let i = 0; i < 100000; i++){
+                const firstNameIdx = Math.floor(Math.random() * firstNamesLen);
+                const firstName = firstNames[firstNameIdx];
+                const lastNameIdx = Math.floor(Math.random() * lastNamesLen);
+                const lastName = lastNames[lastNameIdx];
+                options.push(/* html */`<option value="${firstName}.${lastName}@fakeEmail.com">${firstName} ${lastName}</option>`);
+            }
+            generatedJSON.innerHTML = options.join('');
+        }
+        loadNames();
+    </script>
+</body>
+</html>
